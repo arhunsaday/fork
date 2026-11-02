@@ -6,6 +6,8 @@ import { Providers } from "@/components/providers";
 import { Header } from "@/components/shell/header";
 import { StatusBar } from "@/components/shell/status-bar";
 import { aiProvider } from "@/lib/ai";
+import { authEnabled } from "@/lib/config";
+import { ClerkBridge } from "@/components/auth-bridge";
 
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
@@ -22,33 +24,35 @@ export const viewport: Viewport = {
   ],
 };
 
+const clerkAppearance = {
+  variables: {
+    borderRadius: "0px",
+    fontFamily: "var(--font-mono)",
+    colorPrimary: "var(--brand)",
+    colorBackground: "var(--popover)",
+    colorForeground: "var(--foreground)",
+    colorMutedForeground: "var(--muted-foreground)",
+    colorInput: "var(--background)",
+    colorInputForeground: "var(--foreground)",
+    colorBorder: "var(--border)",
+    colorNeutral: "var(--foreground)",
+  },
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return (
-    <ClerkProvider
-      appearance={{
-        variables: {
-          borderRadius: "0px",
-          fontFamily: "var(--font-mono)",
-          colorPrimary: "var(--brand)",
-          colorBackground: "var(--popover)",
-          colorForeground: "var(--foreground)",
-          colorMutedForeground: "var(--muted-foreground)",
-          colorInput: "var(--background)",
-          colorInputForeground: "var(--foreground)",
-          colorBorder: "var(--border)",
-          colorNeutral: "var(--foreground)",
-        },
-      }}
-    >
-      <html lang="en" className={mono.variable} suppressHydrationWarning>
-        <body className="flex min-h-dvh flex-col">
-          <Providers>
-            <Header />
-            <main className="flex-1 pb-10">{children}</main>
-            <StatusBar ai={aiProvider()} />
-          </Providers>
-        </body>
-      </html>
-    </ClerkProvider>
+  const app = (
+    <Providers>
+      <Header />
+      <main className="flex-1 pb-10">{children}</main>
+      <StatusBar ai={aiProvider()} preview={!authEnabled || !process.env.DATABASE_URL} />
+    </Providers>
   );
+  const page = (body: React.ReactNode) => (
+    <html lang="en" className={mono.variable} suppressHydrationWarning>
+      <body className="flex min-h-dvh flex-col">{body}</body>
+    </html>
+  );
+  // Preview mode: no Clerk keys → render without ClerkProvider (auth features show a notice instead).
+  if (!authEnabled) return page(app);
+  return <ClerkProvider appearance={clerkAppearance}>{page(<ClerkBridge>{app}</ClerkBridge>)}</ClerkProvider>;
 }

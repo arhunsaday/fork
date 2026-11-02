@@ -6,6 +6,8 @@ import { NavLinks } from "./nav-links";
 import { CommandMenu } from "./command-menu";
 import { ThemeToggle, SoundToggle } from "./toggles";
 import { Button } from "@/components/ui/button";
+import { authEnabled } from "@/lib/config";
+import { PreviewBadge } from "./preview-badge";
 
 export async function Header() {
   const viewer = await getViewer().catch(() => null);
@@ -20,21 +22,26 @@ export async function Header() {
           <CommandMenu username={viewer?.username ?? null} />
           <SoundToggle />
           <ThemeToggle />
-          <Show when="signed-in">
-            <Button asChild size="sm" className="ml-1 hidden bg-brand text-brand-foreground hover:bg-brand/85 sm:inline-flex" data-cuelume-tap>
-              <Link href="/new">+ new recipe</Link>
-            </Button>
-            <div className="ml-2 flex size-8 items-center justify-center">
-              <UserButton appearance={{ elements: { avatarBox: "!rounded-none !size-7" } }} />
-            </div>
-          </Show>
-          <Show when="signed-out">
-            <SignInButton mode="modal">
-              <Button size="sm" variant="outline" className="ml-1" data-cuelume-tap>
-                sign in
+          {!authEnabled && <PreviewBadge />}
+          {authEnabled && (
+            <>
+            <Show when="signed-in">
+              <Button asChild size="sm" className="ml-1 hidden bg-brand text-brand-foreground hover:bg-brand/85 sm:inline-flex" data-cuelume-tap>
+                <Link href="/new">+ new recipe</Link>
               </Button>
-            </SignInButton>
-          </Show>
+              <div className="ml-2 flex size-8 items-center justify-center">
+                <UserButton appearance={{ elements: { avatarBox: "!rounded-none !size-7" } }} />
+              </div>
+            </Show>
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <Button size="sm" variant="outline" className="ml-1" data-cuelume-tap>
+                  sign in
+                </Button>
+              </SignInButton>
+            </Show>
+            </>
+          )}
         </div>
       </div>
     </header>

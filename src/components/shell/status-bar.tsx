@@ -6,7 +6,7 @@ import { GitBranchIcon } from "@phosphor-icons/react";
 import { Kbd } from "@/components/ui/kbd";
 
 /** IDE-style status bar pinned to the bottom of the viewport. */
-export function StatusBar({ ai }: { ai: string | null }) {
+export function StatusBar({ ai, preview }: { ai: string | null; preview?: boolean }) {
   const pathname = usePathname();
   const [time, setTime] = React.useState<string>("");
   React.useEffect(() => {
@@ -23,6 +23,11 @@ export function StatusBar({ ai }: { ai: string | null }) {
         main
       </span>
       <span className="hidden truncate sm:inline">~/{segments.join("/")}</span>
+      {preview && (
+        <span className="bg-brand-tint px-1.5 text-brand" title="Read-only demo: sign-in is disabled and data resets on cold starts until Clerk and a database are configured.">
+          preview mode · read-only demo
+        </span>
+      )}
       <span className="ml-auto hidden items-center gap-1.5 sm:flex">
         <span className={ai ? "size-1.5 bg-add" : "size-1.5 bg-faint"} />
         ai: {ai ?? "offline"}

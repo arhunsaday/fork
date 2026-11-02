@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useClerk } from "@clerk/nextjs";
+import { useAuthUI } from "@/components/auth-bridge";
 import {
   CookingPotIcon,
   DotsThreeIcon,
@@ -51,7 +51,7 @@ type Props = {
 
 export function RepoActions(p: Props) {
   const router = useRouter();
-  const clerk = useClerk();
+  const clerk = useAuthUI();
   const { play } = useSound();
   const [starred, setStarred] = React.useState(p.starred);
   const [stars, setStars] = React.useState(p.stars);

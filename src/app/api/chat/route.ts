@@ -1,6 +1,6 @@
 import { convertToModelMessages, createUIMessageStreamResponse, stepCountIs, streamText, tool, toUIMessageStream, type UIMessage } from "ai";
 import { z } from "zod";
-import { auth } from "@clerk/nextjs/server";
+import { getUserId } from "@/lib/auth";
 import { aiEnabled, getModel, llmRecipeSchema, RECIPE_GRAPH_GUIDE } from "@/lib/ai";
 import { recipeDataSchema } from "@/lib/recipe/schema";
 
@@ -22,7 +22,7 @@ Current recipe (JSON):
 ${recipe}`;
 
 export async function POST(req: Request) {
-  const { userId } = await auth();
+  const userId = await getUserId();
   if (!userId) return Response.json({ error: "Sign in to chat with the sous-chef." }, { status: 401 });
   if (!aiEnabled()) return Response.json({ error: "AI is not configured on this server." }, { status: 503 });
 

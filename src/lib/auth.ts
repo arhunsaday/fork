@@ -4,6 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { getDb, schema } from "@/db";
 import { slugify } from "@/lib/recipe/schema";
+import { authEnabled } from "@/lib/config";
 
 export const RESERVED = new Set([
   "new", "explore", "pantry", "shopping", "sign-in", "sign-up", "api", "settings", "about", "cook",
@@ -12,7 +13,7 @@ export const RESERVED = new Set([
 
 /** Current Clerk user mirrored into our DB (created on first sight). Null when signed out. */
 export const getViewer = cache(async () => {
-  const { userId } = await auth();
+  const userId = await getUserId();
   if (!userId) return null;
   const db = await getDb();
   const [existing] = await db.select().from(schema.users).where(eq(schema.users.id, userId));
@@ -38,7 +39,15 @@ export const getViewer = cache(async () => {
   return created ?? (await db.select().from(schema.users).where(eq(schema.users.id, userId)))[0];
 });
 
+/** Clerk user id, or null when signed out / auth disabled (preview mode). */
+export async function getUserId(): Promise<string | null> {
+  if (!authEnabled) return null;
+  const { userId } = await auth();
+  return userId;
+}
+
 export async function requireViewer() {
+  if (!authEnabled) throw new Error("Preview mode: sign-in is disabled on this deployment.");
   const v = await getViewer();
   if (!v) throw new Error("You need to sign in to do that.");
   return v;

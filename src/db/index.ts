@@ -4,8 +4,10 @@ import * as schema from "./schema";
 /**
  * Database client.
  *  - DATABASE_URL set → postgres-js against any Postgres (Supabase, Neon, RDS…)
- *  - otherwise       → embedded PGlite in ./.data (zero-config local dev),
- *                       migrated + seeded automatically on first use.
+ *  - otherwise       → embedded PGlite (zero-config), migrated + seeded on first use:
+ *                       · local dev: persisted in ./.data
+ *                       · serverless (Vercel) / read-only FS: in memory — a preview
+ *                         demo that resets on every cold start.
  */
 
 type DB = import("drizzle-orm/postgres-js").PostgresJsDatabase<typeof schema>;
@@ -26,9 +28,17 @@ async function create(): Promise<DB> {
   const { migrate } = await import("drizzle-orm/pglite/migrator");
   const path = await import("node:path");
   const fs = await import("node:fs");
-  const dir = path.join(process.cwd(), ".data", "pglite");
-  fs.mkdirSync(dir, { recursive: true });
-  const client = new PGlite(dir);
+  let dataDir: string | undefined;
+  if (!process.env.VERCEL) {
+    try {
+      dataDir = path.join(process.cwd(), ".data", "pglite");
+      fs.mkdirSync(dataDir, { recursive: true });
+    } catch {
+      dataDir = undefined; // read-only filesystem → fall back to memory
+    }
+  }
+  if (!dataDir) console.warn("[db] DATABASE_URL not set — using an in-memory preview database (data resets on cold start).");
+  const client = dataDir ? new PGlite(dataDir) : new PGlite();
   const db = drizzle(client, { schema, casing: "snake_case" });
   await migrate(db, { migrationsFolder: path.join(process.cwd(), "drizzle") });
   const { seedIfEmpty } = await import("./seed");

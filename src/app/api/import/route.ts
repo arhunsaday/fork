@@ -1,6 +1,6 @@
 import { generateText, Output } from "ai";
 import { z } from "zod";
-import { auth } from "@clerk/nextjs/server";
+import { getUserId } from "@/lib/auth";
 import { aiEnabled, getModel, llmRecipeSchema, normaliseLlmRecipe, RECIPE_GRAPH_GUIDE } from "@/lib/ai";
 import { extractRecipeFromHtml } from "@/lib/recipe/jsonld";
 import { parseRecipeText } from "@/lib/recipe/parse";
@@ -19,7 +19,7 @@ Ignore life stories, ads, comments and navigation. Keep the author's quantities 
 ${RECIPE_GRAPH_GUIDE}`;
 
 export async function POST(req: Request) {
-  const { userId } = await auth();
+  const userId = await getUserId();
   if (!userId) return Response.json({ error: "Sign in to import recipes." }, { status: 401 });
 
   const parsed = bodySchema.safeParse(await req.json());

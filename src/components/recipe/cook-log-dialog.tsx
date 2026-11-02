@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useClerk } from "@clerk/nextjs";
+import { useAuthUI } from "@/components/auth-bridge";
 import { StarIcon } from "@phosphor-icons/react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ export function CookLogDialog({ recipeId, commitId, signedIn, children }: { reci
   const [rating, setRating] = React.useState<number | null>(null);
   const [notes, setNotes] = React.useState("");
   const [pending, start] = React.useTransition();
-  const clerk = useClerk();
+  const clerk = useAuthUI();
   const router = useRouter();
   const { play } = useSound();
 

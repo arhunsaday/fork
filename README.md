@@ -45,6 +45,15 @@ pnpm dev
 
 Open http://localhost:3000. The first request creates an embedded Postgres in `./.data/pglite`, runs the migrations and seeds demo users and recipes. `pnpm db:reset-local` deletes that database so it is recreated on the next start.
 
+### Preview mode (no Clerk, no database)
+
+The app deploys and runs with **zero configuration**:
+
+- **No Clerk keys** → auth is off. Everything is browsable; sign-in, forking, editing, pantry and shopping show a "preview" notice.
+- **No `DATABASE_URL`** → an embedded PGlite database is used: persisted in `./.data` locally, **in memory** on Vercel/serverless (seeded on each cold start with deterministic ids, so links stay stable across instances).
+
+A "preview mode · read-only demo" badge shows in the status bar. Add the Clerk keys and `DATABASE_URL` to the Vercel project and redeploy to turn it into the real app.
+
 ### Enabling AI
 
 Add **one** of these to `.env.local` and restart. The first one found is used:

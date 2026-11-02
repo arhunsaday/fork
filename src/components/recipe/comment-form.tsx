@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useClerk } from "@clerk/nextjs";
+import { useAuthUI } from "@/components/auth-bridge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ export function CommentForm({ recipeId, signedIn }: { recipeId: string; signedIn
   const [body, setBody] = React.useState("");
   const [pending, start] = React.useTransition();
   const router = useRouter();
-  const clerk = useClerk();
+  const clerk = useAuthUI();
 
   if (!signedIn)
     return (

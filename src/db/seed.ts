@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid";
+import { createHash } from "node:crypto";
 import { count, eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import * as schema from "./schema";
@@ -17,6 +17,14 @@ import {
 } from "./seed-data";
 
 type DB = PostgresJsDatabase<typeof schema>;
+
+/**
+ * Deterministic ids: in preview mode every serverless instance seeds its own
+ * in-memory DB, so ids (and therefore commit URLs) must match across instances.
+ */
+let seq = 0;
+const nanoid = (len: number) =>
+  createHash("sha256").update(`fork-seed-${seq++}`).digest("base64url").replace(/[-_]/g, "x").slice(0, len);
 
 const daysAgo = (d: number, h = 0) => new Date(Date.now() - d * 86400000 - h * 3600000);
 
@@ -68,6 +76,7 @@ export async function seedIfEmpty(db: DB) {
 }
 
 export async function seed(db: DB) {
+  seq = 0;
   await db.insert(schema.users).values(SEED_USERS.map((u) => ({ ...u, createdAt: daysAgo(120) })));
 
   const banana = await createRecipe(db, "seed_ada", [{ message: "initial commit", data: bananaBread, at: daysAgo(40) }]);
