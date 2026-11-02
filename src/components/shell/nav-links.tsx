@@ -20,7 +20,6 @@ export function NavLinks({ username }: { username: string | null }) {
           <Link
             key={l.href}
             href={l.href}
-            data-cuelume-navigate
             className={cn(
               "relative px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground",
               active && "text-foreground after:absolute after:inset-x-2.5 after:-bottom-[13px] after:h-px after:bg-brand",

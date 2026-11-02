@@ -37,7 +37,7 @@ export default async function Home() {
                   import a recipe <ArrowRightIcon />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" data-cuelume-navigate>
+              <Button asChild size="lg" variant="outline">
                 <Link href="/explore">explore</Link>
               </Button>
             </div>
@@ -72,7 +72,7 @@ export default async function Home() {
         {/* Categories */}
         <div className="flex flex-wrap gap-1.5">
           {CATEGORIES.filter((c) => c !== "other").map((c) => (
-            <Link key={c} href={`/explore?category=${c}`} className="border px-3 py-1 text-xs hover:border-brand hover:text-brand" data-cuelume-navigate>
+            <Link key={c} href={`/explore?category=${c}`} className="border px-3 py-1 text-xs hover:border-brand hover:text-brand">
               {CATEGORY_LABEL[c]}
             </Link>
           ))}

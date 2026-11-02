@@ -96,7 +96,7 @@ export function RepoActions(p: Props) {
         <SparkleIcon weight="fill" className="text-brand" /> sous-chef
       </Button>
       <Button variant="outline" size="sm" asChild>
-        <Link href={`${base}/cook`} data-cuelume-navigate>
+        <Link href={`${base}/cook`}>
           <PlayIcon weight="fill" /> cook mode
         </Link>
       </Button>
@@ -124,7 +124,7 @@ export function RepoActions(p: Props) {
       )}
       {p.isOwner && (
         <Button size="sm" asChild className="bg-brand text-brand-foreground hover:bg-brand/85">
-          <Link href={`${base}/edit`} data-cuelume-navigate>
+          <Link href={`${base}/edit`}>
             <PencilSimpleIcon /> edit
           </Link>
         </Button>

@@ -11,7 +11,6 @@ export function RecipeCard({ r }: { r: Card }) {
   return (
     <Link
       href={`/${r.owner}/${r.slug}`}
-      data-cuelume-navigate
       className="group relative flex flex-col border bg-card transition-colors hover:border-foreground/40"
     >
       <div className="flex items-center gap-2 border-b px-3 py-2 text-[11px] text-muted-foreground">

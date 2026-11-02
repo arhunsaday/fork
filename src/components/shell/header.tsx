@@ -14,7 +14,7 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex h-12 max-w-[1400px] items-center gap-2 px-3 sm:px-5">
-        <Link href="/" className="mr-2 shrink-0" data-cuelume-navigate aria-label="fork home">
+        <Link href="/" className="mr-2 shrink-0" aria-label="fork home">
           <Logo />
         </Link>
         <NavLinks username={viewer?.username ?? null} />

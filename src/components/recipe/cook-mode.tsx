@@ -37,7 +37,6 @@ function Inner({ recipe, path, factor }: { recipe: RecipeData; path: string; fac
         const next = Math.max(-1, Math.min(total, cur + d));
         if (next !== cur) {
           setDir(d);
-          play("navigate", { emphasis: "subtle" });
           if (next === total) play("success", { emphasis: "strong" });
         }
         return next;

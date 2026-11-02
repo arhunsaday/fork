@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
-import { useSound } from "@/components/providers";
 
 type Hit = { owner: string; slug: string; title: string; category: string; starsCount: number };
 
@@ -37,7 +36,6 @@ export function CommandMenu({ username }: { username: string | null }) {
   const [hits, setHits] = React.useState<Hit[]>([]);
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
-  const { play } = useSound();
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -67,7 +65,6 @@ export function CommandMenu({ username }: { username: string | null }) {
 
   const go = (href: string) => {
     setOpen(false);
-    play("navigate", { emphasis: "subtle" });
     router.push(href);
   };
 
