@@ -5,14 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "tsx scripts/migrate.ts && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "node --env-file=.env.local e2e/smoke.mjs",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx --env-file=.env.local scripts/seed.ts",
+    "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
+    "db:seed": "SEED_DEMO=true tsx --env-file-if-exists=.env.local scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:reset-local": "rm -rf .data/pglite"
   },

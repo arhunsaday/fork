@@ -67,12 +67,16 @@ AI_MODEL=...            # optional override
 
 Without a key, everything else still works. The sous-chef shows an "AI offline" state. Link imports use JSON-LD and text imports use the offline parser.
 
-### Using a real Postgres (Supabase / Neon / …)
+### Using a real Postgres (Neon / Supabase / …)
+
+On Vercel, `pnpm vercel-build` runs `scripts/migrate.ts` before `next build`. It applies the pending migrations from `drizzle/` automatically whenever a database URL is set (preferring the direct `DATABASE_URL_UNPOOLED`). With `SEED_DEMO=true` it also inserts the demo content, but only into an empty database. Without a URL it does nothing, and the app stays in preview mode.
+
+Locally:
 
 ```bash
-echo 'DATABASE_URL=postgres://…' >> .env.local   # Supabase: use the transaction pooler URL (:6543)
+echo 'DATABASE_URL=postgres://…' >> .env.local
 pnpm db:migrate     # apply drizzle/ migrations
-pnpm db:seed        # optional demo content
+pnpm db:seed        # migrations + demo content (only if the DB is empty)
 ```
 
 The schema lives in `src/db/schema.ts`. After you change it, run `pnpm db:generate` to create a new migration.
