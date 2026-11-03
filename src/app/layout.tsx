@@ -44,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <Providers>
       <Header />
       <main className="flex-1 pb-10">{children}</main>
-      <StatusBar ai={aiProvider()} preview={!authEnabled || !process.env.DATABASE_URL} />
+      <StatusBar ai={aiProvider()} preview={!authEnabled || (!process.env.DATABASE_URL && !!process.env.VERCEL)} />
     </Providers>
   );
   const page = (body: React.ReactNode) => (

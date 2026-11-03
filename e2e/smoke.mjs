@@ -86,8 +86,14 @@ await step("recipe → shopping list", async () => {
 
 await step("star + log build", async () => {
   await page.goto(BASE + "/fork/pate-a-choux");
-  await page.getByRole("button", { name: /^star/ }).click();
-  await page.waitForSelector("text=starred");
+  // Toggle the star and check it flips (works whether or not a previous run left it starred).
+  const starBtn = page.getByRole("button", { name: /^star/ });
+  const before = (await starBtn.innerText()).includes("starred");
+  await starBtn.click();
+  await page.waitForFunction(
+    (was) => [...document.querySelectorAll("button")].some((b) => /^\s*star/.test(b.innerText) && b.innerText.includes("starred") !== was),
+    before,
+  );
   await page.getByRole("button", { name: /cooked it/ }).click();
   await page.getByPlaceholder(/notes:/).fill("Hollow and crisp. 235 g egg.");
   await page.getByRole("button", { name: "log build" }).click();
@@ -117,7 +123,7 @@ await step("cook mode", async () => {
 
 await step("sous-chef offline state", async () => {
   await page.goto(BASE + "/ada_bakes/banana-nut-bread");
-  await page.getByRole("button", { name: /sous-chef/ }).click();
+  await page.getByRole("button", { name: /Open sous-chef/ }).click();
   await page.waitForSelector("text=/AI is offline|I've read the recipe/", { timeout: 10000 });
   await shot("sous-chef");
 });

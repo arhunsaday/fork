@@ -92,7 +92,7 @@ export function RepoActions(p: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-1.5" data-noprint>
-      <Button variant={chatOpen ? "default" : "outline"} size="sm" onClick={() => (needAuth() ? null : setChatOpen(true))} className="gap-1.5" data-cuelume-open>
+      <Button variant={chatOpen ? "default" : "outline"} size="sm" onClick={() => (needAuth() ? null : setChatOpen(!chatOpen))} className="gap-1.5" data-cuelume-open>
         <SparkleIcon weight="fill" className="text-brand" /> sous-chef
       </Button>
       <Button variant="outline" size="sm" asChild>
@@ -179,7 +179,7 @@ export function RepoActions(p: Props) {
       </DropdownMenu>
       <SousChef
         open={chatOpen}
-        onOpenChange={setChatOpen}
+        onOpenChange={(o) => (o && needAuth() ? undefined : setChatOpen(o))}
         recipe={p.recipe}
         recipeId={p.recipeId}
         path={`${p.owner}/${p.slug}`}

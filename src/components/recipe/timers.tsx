@@ -63,7 +63,7 @@ export function TimersProvider({ children }: { children: React.ReactNode }) {
   return (
     <TimersContext.Provider value={{ timers, start }}>
       {children}
-      <div className="fixed right-3 bottom-10 z-50 flex flex-col gap-1.5" data-noprint>
+      <div className="fixed right-3 bottom-[5.25rem] z-50 flex flex-col gap-1.5" data-noprint>
         <AnimatePresence>
           {timers.map((t) => {
             const left = t.endsAt ? Math.max(0, t.endsAt - now) : t.remaining;
