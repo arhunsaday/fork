@@ -185,3 +185,19 @@ describe("pantry matching", () => {
     expect(c.eqHave).toEqual(["oven"]);
   });
 });
+
+describe("db connection ssl", async () => {
+  const { sslFor } = await import("@/db/connection");
+  it("requires TLS for hosted databases without sslmode", () => {
+    expect(sslFor("postgresql://u:p@ep-cool-name-123456.eu-central-1.aws.neon.tech/neondb")).toBe("require");
+    expect(sslFor("postgres://u:p@ep-x-pooler.eu-central-1.aws.neon.tech/neondb?channel_binding=require")).toBe("require");
+  });
+  it("defers to an explicit sslmode in the URL", () => {
+    expect(sslFor("postgres://u:p@db.example.com/x?sslmode=require")).toBeUndefined();
+    expect(sslFor("postgres://u:p@db.example.com/x?sslmode=disable")).toBeUndefined();
+  });
+  it("keeps local databases plain", () => {
+    expect(sslFor("postgres://fork@localhost:5544/forkdb")).toBe(false);
+    expect(sslFor("postgres://fork@127.0.0.1/forkdb")).toBe(false);
+  });
+});

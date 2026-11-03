@@ -20,7 +20,8 @@ async function create(): Promise<DB> {
     const { drizzle } = await import("drizzle-orm/postgres-js");
     const postgres = (await import("postgres")).default;
     // prepare:false keeps it compatible with transaction poolers (Supabase :6543, PgBouncer).
-    const client = postgres(url, { prepare: false, max: 5 });
+    const { pgOptions } = await import("./connection");
+    const client = postgres(url, pgOptions(url, { prepare: false, max: 5 }));
     return drizzle(client, { schema, casing: "snake_case" });
   }
   const { PGlite } = await import("@electric-sql/pglite");

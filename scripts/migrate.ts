@@ -14,6 +14,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import * as schema from "../src/db/schema";
 import { seedIfEmpty } from "../src/db/seed";
+import { pgOptions } from "../src/db/connection";
 
 async function main() {
   const url = process.env.DATABASE_URL_UNPOOLED || process.env.POSTGRES_URL_NON_POOLING || process.env.DATABASE_URL;
@@ -21,7 +22,15 @@ async function main() {
     console.log("[migrate] no DATABASE_URL — skipping (preview mode)");
     return;
   }
-  const client = postgres(url, { max: 1, onnotice: () => {} });
+  const host = (() => {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return "(unparseable URL)";
+    }
+  })();
+  console.log(`[migrate] connecting to ${host}`);
+  const client = postgres(url, pgOptions(url, { max: 1, onnotice: () => {} }));
   try {
     const db = drizzle(client, { schema, casing: "snake_case" });
     await migrate(db, { migrationsFolder: path.join(process.cwd(), "drizzle") });
